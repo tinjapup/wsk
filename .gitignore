@@ -1,0 +1,4 @@
+# files to exclude from version control
+.vscode
+node_modules
+.DS_Store
