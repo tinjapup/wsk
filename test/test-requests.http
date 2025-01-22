@@ -1,14 +1,22 @@
-# ekat testit
+# GET testi
 GET http://localhost:3000
 
-### toinen testi
+### toinen GET testi
 GET http://localhost:3000/moro
 
-### taas testi
+### POST testi
 POST http://localhost:3000/api/moro
-Content-Type: application/json
+content-type: application/json
 
 {
-    "sender": "tinja",
-    "message": "testitervehdys"
+  "sender": "Sender",
+  "message": "Hello World!"
+}
+
+### KERTAUS testi
+POST http://localhost:3000/api/square/10
+content-type: application/json
+
+{
+  "Application": "Square of the number"
 }
