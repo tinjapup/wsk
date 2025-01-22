@@ -1,0 +1,14 @@
+# ekat testit
+GET http://localhost:3000
+
+### toinen testi
+GET http://localhost:3000/moro
+
+### taas testi
+POST http://localhost:3000/api/moro
+Content-Type: application/json
+
+{
+    "sender": "tinja",
+    "message": "testitervehdys"
+}
