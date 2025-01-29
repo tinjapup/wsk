@@ -1,4 +1,71 @@
-# GET testi
+## END POINTS FOR ITEMS RESOURCE
+
+### gets all items
+GET http://localhost:3000/api/items
+
+### get one item by id
+GET http://localhost:3000/api/items/3
+
+### posts new item
+POST http://localhost:3000/api/items
+Content-Type: application/json
+
+{
+  "name": "New item"
+}
+
+### updates item
+PUT http://localhost:3000/api/items/1
+Content-Type: application/json
+
+{
+  "name": "New name"
+}
+
+### deletes item
+DELETE http://localhost:3000/api/items/1
+content-type: application/json
+
+
+
+## END POINTS FOR USERS RESOURCE
+
+### Get all users
+GET http://localhost:3000/api/users
+Content-Type: application/json
+
+### Get user by ID
+GET http://localhost:3000/api/users/1
+Content-Type: application/json
+
+### Add new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "Newname",
+  "password": "Password",
+  "email": "newemail@email.com"
+}
+
+
+### user login
+GET http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "username": "Newname",
+  "password": "Password"
+}
+
+
+
+
+
+## RANDOM PRACTICE
+
+
+### GET testi
 GET http://localhost:3000
 
 ### toinen GET testi
@@ -6,7 +73,7 @@ GET http://localhost:3000/moro
 
 ### POST testi
 POST http://localhost:3000/api/moro
-content-type: application/json
+Content-Type: application/json
 
 {
   "sender": "Sender",
@@ -15,7 +82,7 @@ content-type: application/json
 
 ### KERTAUS testi
 POST http://localhost:3000/api/square/10
-content-type: application/json
+Content-Type: application/json
 
 {
   "Application": "Square of the number"

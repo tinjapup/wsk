@@ -1,18 +1,16 @@
 import express from 'express';
+import {addNewItem, deleteItem, getItems, getItemsId, updateItem} from './items.js';
+import { addNewUser, getUserById, getUsers, login } from './users.js';
+
 const hostname = '127.0.0.1';
 const app = express();
 const port = 3000;
 
 
-// staattinen html-sivusto tarjoillaan palvelimen juuressa
 app.use('/', express.static('public'));
 
-
-// middleware, joka lukee json-datan POST pyyntöjen rungosta
 app.use(express.json());
 
-
-// rest-apin resurssit tarjoillaan /api/-polun alla
 app.get('/api/', (req, res) => {
   res.send('Welcome to my GET API!');
   res.status(201);
@@ -20,13 +18,63 @@ app.get('/api/', (req, res) => {
   console.log('mooooi');
 });
 
+
+
+// END POINTS FOR ITEMS RESOURCES
+
+// retrieves all items
+app.get('/api/items', getItems);
+
+// retrieves one item
+app.get('/api/items/:id', getItemsId);
+
+// adds item to items
+app.post('/api/items', addNewItem);
+
+// adds item to items
+app.put('/api/items/:id', updateItem);
+
+// deletes item from items
+app.delete('/api/items/:id', deleteItem);
+
+
+// END POINTS FOR USERS RESOURCES
+
+
+// gets all users
+app.get('/api/users', getUsers);
+
+// gets all users
+app.get('/api/users/:id', getUserById);
+
+// adds new user
+app.post('/api/users', addNewUser);
+
+// login
+app.get('/api/users/login', login);
+
+
+
+
+
+// RANDOM PRACTICE
+// get-pyyntö
+
 app.get('/api/moro', (req, res) => {
   console.log(req.body);
   res.status(201);
   res.json({reply: 'moro!' + req.body.sender});
 });
 
-// reading from route params
+// post-pyyntö
+app.post('/api/moro', (req, res) => {
+  res.status(200)
+  console.log(req.body);
+  res.json({reply: 'no Moro ' + req.body.sender});
+});
+
+
+// testi, parametrit reitistä
 app.get('/api/sum/:num1/:num2', (req, res) => {
   console.log(req.params);
 
@@ -50,7 +98,7 @@ app.get('/api/sum/:num1/:num2', (req, res) => {
 
 });
 
-// square of a number, test
+// OMA TESTI, laskee numerosta sen neliön
 app.get('/api/square/:num', (req, res) => {
   console.log(req.params);
 
@@ -69,12 +117,7 @@ app.get('/api/square/:num', (req, res) => {
   });
 });
 
-// moro
-app.post('/api/moro', (req, res) => {
-  res.status(200)
-  console.log(req.body);
-  res.json({reply: 'no Moro ' + req.body.sender});
-});
+// app.listen
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
