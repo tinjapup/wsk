@@ -1,16 +1,18 @@
 import express from 'express';
 import {addNewItem, deleteItem, getItems, getItemsId, updateItem} from './items.js';
 import { addNewUser, getUserById, getUsers, login } from './users.js';
+import cors from 'cors';
 
 const hostname = '127.0.0.1';
 const app = express();
 const port = 3000;
 
+// cors
+
+app.use(cors());
 
 app.use('/', express.static('public'));
-
 app.use(express.json());
-
 app.get('/api/', (req, res) => {
   res.send('Welcome to my GET API!');
   res.status(201);
