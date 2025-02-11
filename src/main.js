@@ -1,7 +1,8 @@
 import express from 'express';
 import {addNewItem, deleteItem, getItems, getItemsId, updateItem} from './items.js';
-import { addNewUser, getUserById, getUsers, login } from './users.js';
+import { addNewUser, login } from './users.js';
 import cors from 'cors';
+import entryRouter from './routes/entry-router.js';
 
 const hostname = '127.0.0.1';
 const app = express();
@@ -19,10 +20,19 @@ app.get('/api/', (req, res) => {
   console.log(req.url);
   console.log('mooooi');
 });
-
+app.use('/api/entries', entryRouter);
+app.use('/api/entries/:id', entryRouter);
+app.use('/api/users', entryRouter);
+app.use('/api/users/:id', entryRouter);
 
 
 // END POINTS FOR ITEMS RESOURCES
+
+// retrieves items
+app.get('/api/entries', entryRouter);
+app.get('/api/entries/:id', entryRouter);
+app.get('/api/users', entryRouter);
+app.get('/api/users/:id', entryRouter);
 
 // retrieves all items
 app.get('/api/items', getItems);
@@ -44,10 +54,10 @@ app.delete('/api/items/:id', deleteItem);
 
 
 // gets all users
-app.get('/api/users', getUsers);
+//app.get('/api/users', getUsers);
 
 // gets all users
-app.get('/api/users/:id', getUserById);
+//app.get('/api/users/:id', getUserById);
 
 // adds new user
 app.post('/api/users', addNewUser);

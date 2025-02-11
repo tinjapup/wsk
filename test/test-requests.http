@@ -1,6 +1,12 @@
 ## END POINTS FOR ITEMS RESOURCE
 
 ### gets all items
+GET http://localhost:3000/api/users
+
+### gets all items
+POST http://localhost:3000/api/users
+
+### gets all items
 GET http://localhost:3000/api/items
 
 ### get one item by id
