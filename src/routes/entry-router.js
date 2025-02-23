@@ -1,31 +1,23 @@
 import express from 'express';
 import {
-  getEntries,
   getEntryById,
   postEntry,
   putEntry,
-  deleteEntry,
-  getUsers,
-  getUserById,
-  postUser
+  eraseEntry,
+  updateEntry
 } from '../controllers/entry-controller.js';
+import { authenticateToken } from '../middlewares/authentication.js';
 
 const entryRouter = express.Router();
 
-entryRouter.route('/api/entries')
-.get(getEntries).post(postEntry);
+entryRouter.route('/')
+  .get(authenticateToken, getEntryById)
+  .post(authenticateToken, postEntry)
+  .delete(authenticateToken, eraseEntry)
+  .put(authenticateToken, updateEntry);
 
-entryRouter.route('/api/entries/:id')
-  .get(getEntryById).post(postEntry)
-  .put(putEntry) 
-  .delete(deleteEntry); 
-
-entryRouter.route('/api/users')
-.get(getUsers)
-.post(postUser); 
-
-entryRouter.route('/api/users/:id')
-.get(getUserById); 
-
+  entryRouter.route('/:id')
+  .get(authenticateToken, getEntryById)
+  .put(authenticateToken, putEntry);
 
 export default entryRouter;

@@ -2,65 +2,10 @@
 
 import promisePool from '../utils/database.js';
 
-/*
-const diaryEntries = [
-  {
-    "entry_id": 5,
-    "user_id": 5,
-    "entry_date": "2024-01-14",
-    "mood": "Relaxed",
-    "weight": 75.0,
-    "sleep_hours": 8,
-    "notes": "Spent the day reading",
-    "created_at": "2024-01-14T19:00:00"
-  },
-  {
-    "entry_id": 4,
-    "user_id": 4,
-    "entry_date": "2024-01-13",
-    "mood": "Energetic",
-    "weight": 55.0,
-    "sleep_hours": 9,
-    "notes": "Went for a morning run",
-    "created_at": "2024-01-13T18:00:00"
-  },
-  {
-    "entry_id": 3,
-    "user_id": 3,
-    "entry_date": "2024-01-12",
-    "mood": "Tired",
-    "weight": 68.0,
-    "sleep_hours": 6,
-    "notes": "Work was demanding",
-    "created_at": "2024-01-12T22:00:00"
-  },
-  {
-    "entry_id": 2,
-    "user_id": 2,
-    "entry_date": "2024-01-11",
-    "mood": "Satisfied",
-    "weight": 65.0,
-    "sleep_hours": 7,
-    "notes": "Met with friends, had a good time",
-    "created_at": "2024-01-11T21:00:00"
-  },
-  {
-    "entry_id": 1,
-    "user_id": 1,
-    "entry_date": "2024-01-10",
-    "mood": "Happy",
-    "weight": 70.5,
-    "sleep_hours": 8,
-    "notes": "Had a great workout session",
-    "created_at": "2024-01-10T20:00:00"
-  }
-];
-
-*/
-
-const listAllEntries = async () => {
+const findAllEntries = async (user) => {
+  console.log("findAllEntries testing", user);
   try {
-    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries');
+    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE user_id = ?', [user]);
     console.log('rows', rows);
     return rows;
   } catch (e) {
@@ -69,10 +14,10 @@ const listAllEntries = async () => {
   }
 };
 
-const findEntryById = async (id) => {
-  console.log("findEntryById testing");
+const findEntryById = async (user, id) => {
+  console.log("findEntryById testing", user, id);
   try {
-    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE entry_id = ?', [id]);
+    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE entry_id = ? AND user_id', [id, user]);
     console.log('rows', rows);
     return rows[0];
   } catch (e) {
@@ -96,6 +41,56 @@ const addEntry = async (entry) => {
   }
 };
 
+
+const deleteEntry = async (user, id) => {
+  console.log("deleteEntry testing, id:", id);
+  console.log("user info")
+  try {
+    const [rows] = await promisePool.query('DELETE FROM DiaryEntries WHERE user_id = ? AND entry_id = ?', [user, id]);
+    console.log('rows', rows);
+    if (!rows.affectedRows) {
+      return { message: `Entry with ID ${id} could not been deleted.` };
+    }
+    return {message: `Entry with ID ${id} deleted.`};
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  };
+}
+const editEntry = async (user, id, updates) => {
+  const [existingRows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE user_id = ? AND entry_id = ?', [user, id]);
+  if (existingRows.length === 0) {
+    return { message: `Entry with ID ${id} could not been updated.` };
+  }
+  const existingEntry = existingRows[0];
+
+  console.log('existingEntry', existingEntry);
+  console.log('updates', updates);
+  const updatedEntry = {
+    ...existingEntry,
+    ...updates,
+  };
+
+  console.log('updatedEntry', updatedEntry);
+  try {
+    const { entry_date, mood, weight, sleep_hours, notes } = updatedEntry;
+    const [result] = await promisePool.query(
+      'UPDATE DiaryEntries SET entry_date = ?, mood = ?, weight = ?, sleep_hours = ?, notes = ? WHERE user_id = ? AND entry_id = ?',
+      [entry_date, mood, weight, sleep_hours, notes, user, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return { message: `Entry with ID ${id} was not updated.` };
+    }
+
+    return { message: `Entry with ID ${id} updated.` };
+  } catch (e) {
+    console.error('error', e.message);
+    return { error: e.message };
+  }
+};
+
+/*
 
 // USERS
 
@@ -139,5 +134,7 @@ const addUser = async (entry) => {
     return {error: e.message};
   }
 };
+*/
 
-export {listAllEntries, listAllUsers, findEntryById, addEntry, findUserById, addUser};
+export {editEntry, findAllEntries, findEntryById, addEntry, deleteEntry};
+//export {editEntry, listAllUsers, findAllEntries, findEntryById, addEntry, deleteEntry, findUserById, addUser};

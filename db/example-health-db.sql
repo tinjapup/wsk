@@ -49,7 +49,7 @@ CREATE TABLE Exercises (
 -- Insert sample data
 
 INSERT INTO Users (username, password, email, created_at, user_level) VALUES
-('johndoe', 'hashed_password', 'johndoe@example.com', '2024-01-01 09:00:00', 'regular'),
+('john2doe', '$2b$10$gF710tcwRHfeqjAna0JXf.S90uXFfd9QrQuoaxsb4CSmYTiA1oZT.', 'johndoe@example.com', '2024-01-01 09:00:00', 'regular'),
 ('janedoe', 'hashed_password', 'janedoe@example.com', '2024-01-02 10:00:00', 'admin'),
 ('alice_jones', 'hashed_password', 'alice@example.com', '2024-01-04 08:30:00', 'regular'),
 ('bob_brown', 'hashed_password', 'bob@example.com', '2024-01-05 07:45:00', 'regular');

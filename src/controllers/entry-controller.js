@@ -1,20 +1,19 @@
-import {listAllEntries, findEntryById, addEntry, listAllUsers, findUserById, addUser} from "../models/entry-model.js";
+import {findEntryById, findAllEntries, addEntry, deleteEntry, editEntry} from "../models/entry-model.js";
 
-const getEntries = async (req, res) => {
-  const result = await listAllEntries();
-  console.log("getEntries test");
-  if (!result.error) {
-    res.json(result);
-  } else {
-    res.status(500);
-    res.json(result);
-    console.log("getEntries not working");
-  }
-};
 
 const getEntryById = async (req, res) => {
-  const entry = await findEntryById(req.params.id);
-  console.log(req.params.id);
+  console.log("getEntryById test", req.body.entry_id);
+  console.log("req.user", req.userId);
+
+  let entry;
+
+  if (req.body.entry_id === 0) {
+    entry = await findAllEntries(req.userId);
+  } else {
+    entry = await findEntryById(req.userId, req.body.entry_id);
+    console.log(entry);
+  }
+
   if (entry) {
     res.json(entry);
   } else {
@@ -23,32 +22,67 @@ const getEntryById = async (req, res) => {
 };
 
 const postEntry = async (req, res) => {
-  const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
-  if (entry_date && (weight || mood || sleep_hours || notes) && user_id) {
-    const result = await addEntry(req.body);
-    if (result.entry_id) {
-      res.status(201);
-      res.json({message: 'New entry added.', ...result});
-    } else {
-      res.status(500);
-      res.json(result);
+
+    console.log("entry-controller");
+    console.log("req.body", req.body);
+    console.log("req.user", req.userId);
+    try {
+      const newEntry = req.body;
+
+      newEntry.user_id = req.userId;
+
+      const result = await addEntry(newEntry);
+
+      if (result.entry_id) {
+        res.status(201).json({ message: "Entry added.", ...result });
+      } else {
+        res.status(500).json({ message: "Failed to add entry.", error: result });
+      }
+    } catch (error) {
+      console.error("Error adding entry:", error);
+      res.status(500).json({ message: "Internal server error", error: error.message });
     }
-  } else {
-    res.sendStatus(400);
-  }
-};
+  };
 
 const putEntry = (req, res) => {
   // placeholder for future implementation
   res.sendStatus(200);
 };
 
-const deleteEntry = (req, res) => {
-  // placeholder for future implementation
-  res.sendStatus(200);
+const eraseEntry = async (req, res) => {
+  console.log("eraseEntry testing, req", req.body);
+  console.log("req.user", req.userId);
+  const result = await deleteEntry(req.userId, req.body.entry_id);
+  if (!result.error) {
+    res.json(result);
+  } else {
+    res.status(500);
+    res.json(result);
+  }
+}
+
+const updateEntry = async (req, res) => {
+  console.log("entry-controller, updateEntry");
+  console.log("req.body", req.body);
+  console.log("req.user", req.userId);
+  const { entry_id, ...updates } = req.body;
+
+  try {
+    const result = await editEntry(req.userId, entry_id, updates);
+    console.log("result", result);
+    if (result.message) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json({ message: "Failed to update entry.", error: result });
+    }
+  } catch (error) {
+    // Catch any unexpected errors during the try block execution
+    console.error("Error updating entry:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
 };
 
-
+/*
 // USERS
 
 const getUsers = async (req, res) => {
@@ -88,5 +122,7 @@ const postUser = async (req, res) => {
     res.sendStatus(400);
   }
 };
+*/
 
-export {getEntries, getEntryById, postEntry, putEntry, deleteEntry, getUsers, getUserById, postUser};
+export {updateEntry, getEntryById, postEntry, putEntry, eraseEntry};
+//export {updateEntry, getEntryById, postEntry, putEntry, eraseEntry, getUsers, getUserById, postUser};
