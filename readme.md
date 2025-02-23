@@ -1,4 +1,4 @@
-# web-sovelluskehitys
+# Web Development
 
 Authentication properties:
 - Users must be logged in to add, update, or delete their own entries and account information. They are only allowed to manage their own user data based on their unique user_id.
