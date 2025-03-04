@@ -1,4 +1,3 @@
-
 ## END POINTS FOR AUTH RESOURCE
 
 ### Login Request
@@ -6,8 +5,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "janedoe",
-  "password": "hashed_password"
+  "username": "admin",
+  "password": "admin123"
 }
 
 
@@ -16,14 +15,14 @@ Content-Type: application/json
 
 ### Get all users (only admins)
 GET http://localhost:3000/api/users
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6IiQyYiQxMCRDejB4Z01LL1lQY2JIR2QvSGY1L3VPeERaMnB0UTFMU3d0RHJCQjRXNUVUNGJ1L0w4ZUllSyIsImVtYWlsIjoiamFuZWRvZUBleGFtcGxlLmNvbSIsImNyZWF0ZWRfYXQiOiIyMDI0LTAxLTAyVDA4OjAwOjAwLjAwMFoiLCJ1c2VyX2xldmVsIjoiYWRtaW4iLCJpYXQiOjE3NDAzMzYyNTgsImV4cCI6MTc0MDM0NzA1OH0.Uibs7Ls9qreL7XFNhd2B8n3KGLQX0oxs8EBMrwQfcWo
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmIkMTAkMDBpbFhNUUZsMW1Xd05xNHRvWWd5dUMwOGozbnZrbHlxNEtqSGc2MjEvSWc0bHdnb3h2RC4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAyLTI1VDEwOjQwOjA0LjAwMFoiLCJ1c2VyX2xldmVsIjoiYWRtaW4iLCJpYXQiOjE3NDEwODAxOTcsImV4cCI6MTc0MTA5MDk5N30.Dqi4rEbOXQ4t8jhezDRFRS342WzUuA5C1zNpAOCWSxg
 Content-Type: application/json
 
 
 
 ### Get user by ID
 GET http://localhost:3000/api/users/2
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6IiQyYiQxMCRDejB4Z01LL1lQY2JIR2QvSGY1L3VPeERaMnB0UTFMU3d0RHJCQjRXNUVUNGJ1L0w4ZUllSyIsImVtYWlsIjoiamFuZWRvZUBleGFtcGxlLmNvbSIsImNyZWF0ZWRfYXQiOiIyMDI0LTAxLTAyVDA4OjAwOjAwLjAwMFoiLCJ1c2VyX2xldmVsIjoiYWRtaW4iLCJpYXQiOjE3NDAzMzYyNTgsImV4cCI6MTc0MDM0NzA1OH0.Uibs7Ls9qreL7XFNhd2B8n3KGLQX0oxs8EBMrwQfcWo
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6IiQyYiQxMCR5U0Z0L3RtVlFKOG9taXo0QWg2ZWouWFRUQUsuRi9wQ3ExTVlJV25Md3ZSa0R3SUZqaFRZNiIsImVtYWlsIjoibmV3bWFpbGFkZHJlc3NAdXBkYXRlZC5jb20iLCJjcmVhdGVkX2F0IjoiMjAyNC0wMS0wMlQwODowMDowMC4wMDBaIiwidXNlcl9sZXZlbCI6ImFkbWluIiwiaWF0IjoxNzQwNDY3MDMzLCJleHAiOjE3NDA0Nzc4MzN9.qzOTfeY7hLvp8qQrwULJqSSRF1MOxEWc-c-Sfq8wRI8
 Content-Type: application/json
 
 
@@ -33,9 +32,9 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "Newname",
-  "password": "Password",
-  "email": "newemail@email.com"
+  "username": "Newuuuuuser",
+  "password": "Password534534",
+  "email": "newemail23456@email.com"
 }
 
 ### delete user
@@ -57,7 +56,7 @@ content-type: application/json
 
 ### post a new entry
 POST http://localhost:3000/api/entries
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6IiQyYiQxMCRpdnYvSkZZYjNQMThoTlZmZVpIMndlRzZOZkFSYlB0eEY1b2NEc2VUb1c5TXUuWFVRWDdwdSIsImVtYWlsIjoiamFuZWRvZUBleGFtcGxlLmNvbSIsImNyZWF0ZWRfYXQiOiIyMDI0LTAxLTAyVDA4OjAwOjAwLjAwMFoiLCJ1c2VyX2xldmVsIjoiYWRtaW4iLCJpYXQiOjE3NDAzMjM1MTQsImV4cCI6MTc0MDMzNDMxNH0.Q9yJiIPksT7D-jQk17xIuWkKvoR0JpkILmixwitMmfk
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6IiQyYiQxMCR5U0Z0L3RtVlFKOG9taXo0QWg2ZWouWFRUQUsuRi9wQ3ExTVlJV25Md3ZSa0R3SUZqaFRZNiIsImVtYWlsIjoibmV3bWFpbGFkZHJlc3NAdXBkYXRlZC5jb20iLCJjcmVhdGVkX2F0IjoiMjAyNC0wMS0wMlQwODowMDowMC4wMDBaIiwidXNlcl9sZXZlbCI6ImFkbWluIiwiaWF0IjoxNzQwNDY3MDMzLCJleHAiOjE3NDA0Nzc4MzN9.qzOTfeY7hLvp8qQrwULJqSSRF1MOxEWc-c-Sfq8wRI8
 content-type: application/json
 
 {

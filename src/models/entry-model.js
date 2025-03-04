@@ -4,8 +4,9 @@ import promisePool from '../utils/database.js';
 
 const findAllEntries = async (user) => {
   console.log("findAllEntries testing", user);
+
   try {
-    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE user_id = ?', [user]);
+    const [rows] = await promisePool.query('SELECT * FROM Entries WHERE user_id = ?', [user]);
     console.log('rows', rows);
     return rows;
   } catch (e) {
@@ -14,23 +15,50 @@ const findAllEntries = async (user) => {
   }
 };
 
-const findEntryById = async (user, id) => {
+const findEntryById = async (user, id, next) => {
   console.log("findEntryById testing", user, id);
+
   try {
-    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries WHERE entry_id = ? AND user_id', [id, user]);
-    console.log('rows', rows);
-    return rows[0];
-  } catch (e) {
-    console.error('error', e.message);
-    return {error: e.message};
+    let query, values;
+
+    if (id == 0) {
+      // Fetch all entries for the user
+      query = "SELECT * FROM Entries WHERE user_id = ? ORDER BY entry_date ASC";
+      values = [user];
+    } else {
+      // Fetch a specific entry by id and user
+      query = "SELECT * FROM Entries WHERE entry_id = ? AND user_id = ? ORDER BY entry_date ASC";
+      values = [id, user];
+    }
+
+    const [rows] = await promisePool.query(query, values);
+
+    if (rows.length > 0) {
+      console.log("rows", rows);
+      return rows;
+    } else {
+      console.log("No rows found");
+      return [];
+    }
+
+  } catch (error) {
+    next(error);
+
+    /*
+    console.error("Error:", error.message);
+    return { error: error.message };
+    */
   }
 };
 
 const addEntry = async (entry) => {
-  const {user_id, entry_date, mood, weight, sleep_hours, notes} = entry;
-  const sql = `INSERT INTO DiaryEntries (user_id, entry_date, mood, weight, sleep_hours, notes)
+  console.log("Add entry", entry);
+  const sql = `INSERT INTO Entries (user_id, entry_date, activity, name, duration, notes)
                VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [user_id, entry_date, mood, weight, sleep_hours, notes];
+  const params = [entry.user_id, entry.date, entry.activity, entry.name, entry.duration, entry.comment];
+
+
+
   try {
     const rows = await promisePool.query(sql, params);
     console.log('rows', rows);

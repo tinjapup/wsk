@@ -6,6 +6,11 @@ import {
   deleteUser,
   editUser
 } from '../models/user-model.js';
+import { validationResult } from 'express-validator';
+
+
+
+
 
 // Check if user is admin
 const checkIfAdmin = async (id) => {
@@ -17,9 +22,20 @@ const checkIfAdmin = async (id) => {
   }
 };
 
+
+
+
 // Get all user info
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
     console.log("getUsers test", req.userId);
+
+    // validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Invalid or missing fields');
+      error.status = 400;
+      return next(error);
+    }
 
     // check if user is admin
     const user = await selectUserById(req.userId);
@@ -30,15 +46,27 @@ const getUsers = async (req, res) => {
       console.log("All users", users);
       res.json(users);
     } else {
-      res.sendStatus(404).json({message: 'Permission denied'});
+      //res.sendStatus(403).json({message: 'Access denied'});
+      const error = new Error('Access denied');
+      error.status = 403;
+      return next(error);
     }
   };
 
 // Get user by id
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   console.log('getUserById', req.params.id);
   console.log("getUsers test", req.userId);
 
+  // validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error('Invalid or missing fields');
+    error.status = 400;
+    return next(error);
+  }
+
+  // check if user if admin
   const admin = checkIfAdmin(req.userId);
 
   try {
@@ -46,54 +74,82 @@ const getUserById = async (req, res) => {
       const users = await selectUserById(req.params.id);
       console.log("Userinfo", users);
     } else {
-      res.status(404).json({message: 'No access'});
+      const error = new Error('Access denied');
+      error.status = 403;
+      return next(error);
     }
   } catch (error) {
     res.status(500).json({message: error.message});
+    return next(error);
   }
 };
 
 // Add new user
-const addUser = async (req, res) => {
-  console.log('addUser request body', req.body);
+const addUser = async (req, res, next) => {
+
+  console.log('Request body:', req.body);
+
   const {username, password, email} = req.body;
-  if (username && password && email) {
+  console.log('addUser request body', username, password, email);
+
+  // validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error('Invalid or missing fields');
+    error.status = 400;
+    return next(error);
+  }
+
+  try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = {
-      username,
-      password: hashedPassword,
-      email,
-    };
-    try {
-      const result = await insertUser(newUser);
-      res.status(201);
-      return res.json({message: 'User added. id: ' + result});
-    } catch (error) {
-      console.error(error.message);
-      return res.status(400).json({message: 'DB error: ' + error.message});
-    }
+
+      const newUser = {
+        username,
+        password: hashedPassword,
+        email,
+      };
+
+    console.log("newUser", newUser);
+
+    const result = await insertUser(newUser);
+    res.status(201);
+    return res.json({message: 'New user added. id: ' + result});
+  } catch (error) {
+    console.error('Error adding user:', error);
+    return next({ status: 500, message: 'Internal Server Error' });
   }
-  res.status(400);
-  return res.json({
-    message: 'Request should have username, password and email properties.',
-  });
+
 };
 
 // Edit user by id
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   console.log('editUser request body', req.body, req.userId);
-  const user = await editUser(req);
-  if (user) {
-    res.json({message: 'User updated.'});
-  } else {
-    res.status(404).json({message: 'User not found'});
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Invalid or missing fields');
+    error.status = 400;
+    return next(error);
+  }
+
+  try {
+    const user = await editUser(req);
+    if (user) {
+      return res.json({message: 'User updated.'});
+    } else {
+      return next({ status: 404, message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return next({ status: 500, message: 'Internal Server Error' });
   }
 };
 
 
 // Delete user by id
-const eraseUser = async (req, res) => {
+const eraseUser = async (req, res, next) => {
   console.log("eraseUser testing, req", req.body);
   console.log("req.user", req.userId);
   const admin = await checkIfAdmin(req.userId);
@@ -103,15 +159,18 @@ const eraseUser = async (req, res) => {
   try {
 
     if (admin && req.userId == req.params.id) {
-      res.status(200).json({message: 'Admin account be deleted'});
+      return next({ status: 500, message: 'Admin account cannot be deleted' });
     } else if (admin || req.userId === req.params.id) {
       const result = await deleteUser(req.params.id);
       console.log("deleteUser testing, result", result);
     } else {
-      res.status(404).json({message: 'No access'});
+      const error = new Error('Access denied');
+      error.status = 403;
+      return next(error);
     }
   } catch (error) {
-    res.status(500).json({message: error.message});
+    console.error('Error deleting user:', error);
+    return next({ status: 500, message: 'Internal Server Error' });
   }
 
 };

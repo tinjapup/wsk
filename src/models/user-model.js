@@ -28,8 +28,8 @@ const selectUserById = async (userId) => {
 const insertUser = async (user) => {
   try {
     const [result] = await promisePool.query(
-      'INSERT INTO Users (username, password, email) VALUES (?, ?, ?)',
-      [user.username, user.password, user.email],
+      'INSERT INTO Users (username, password, email, user_level) VALUES (?, ?, ?, ?)',
+      [user.username, user.password, user.email, "user"],
     );
     console.log('insertUser', result);
     // return only first item of the result array
