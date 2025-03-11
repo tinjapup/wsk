@@ -32,6 +32,10 @@ Tribe+ is a web application designed for tracking exercise activity.
 - **Authentication:** JWT, bcrypt
 - **Data visualization:** Chart.js
 
+- ## Known bugs
+
+- Changing password does not work properly
+
 ## Screenshots
 
 ![Screenshot 2025-03-11 080933](https://github.com/user-attachments/assets/90848b2e-0f39-4b16-adbb-fe85eb7d1ab8)
@@ -41,10 +45,6 @@ Tribe+ is a web application designed for tracking exercise activity.
 ## Database Structure
 
 ![TribeDB](https://github.com/user-attachments/assets/e7a74053-194d-4751-82a7-93e68eb5808b)
-
-## Known bugs
-
-- Changing password does not work properly
 
 ## Localhost addresses
 
