@@ -67,11 +67,8 @@ CREATE TABLE Comments (
 	FOREIGN KEY (entry_id) REFERENCES Entries(entry_id)
 );
 
--- insert admin
-INSERT INTO Users (username, password, email, user_level) VALUES
-	('admin', 'admin123', 'admin@email.com', 'admin');
-
-SELECT * FROM USERS
-
 ALTER TABLE entries DROP COLUMN sleep_hours;
 ALTER TABLE entries ADD COLUMN duration INT NOT NULL;
+ALTER TABLE Users ADD COLUMN first_name VARCHAR(50) NOT NULL;
+ALTER TABLE Users ADD COLUMN last_name VARCHAR(50) NOT NULL;
+DROP TABLE Comments;

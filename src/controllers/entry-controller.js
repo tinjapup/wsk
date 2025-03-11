@@ -31,7 +31,8 @@ const getEntryById = async (req, res, next) => {
 
 const postEntry = async (req, res, next) => {
 
-  // validation errors
+  console.log("post entryssä asti");
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Invalid or missing fields');

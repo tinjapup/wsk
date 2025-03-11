@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator";
 
 const validationErrorHandler = (req, res, next) => {
+  console.log("error handler");
   const errors = validationResult(req, {strictParams: ['body']});
   if (!errors.isEmpty()) {
     const error = new Error('Bad Request');

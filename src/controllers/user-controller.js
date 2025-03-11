@@ -89,7 +89,7 @@ const addUser = async (req, res, next) => {
 
   console.log('Request body:', req.body);
 
-  const {username, password, email} = req.body;
+  const {username, password, email, firstname, lastname, weight, height} = req.body;
   console.log('addUser request body', username, password, email);
 
   // validation errors
@@ -108,13 +108,43 @@ const addUser = async (req, res, next) => {
         username,
         password: hashedPassword,
         email,
+        firstname,
+        lastname,
+        weight,
+        height
       };
 
     console.log("newUser", newUser);
 
     const result = await insertUser(newUser);
-    res.status(201);
-    return res.json({message: 'New user added. id: ' + result});
+    return res.status(201).json({message: 'New user added. id: ' + result});
+  } catch (error) {
+    console.error('Error adding user:', error);
+    return next({ status: 500, message: 'Internal Server Error' });
+  }
+
+};
+
+// change password
+const changePassword = async (req, res, next) => {
+  const {username, password, user_id} = req.body;
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newUser = {
+        username,
+        password: hashedPassword,
+        user_id,
+      };
+
+    console.log("newUser", newUser);
+
+    const user = await editUser(newUser);
+    if (user) {
+    return res.status(201).json({message: 'Password changed'});
+    }
   } catch (error) {
     console.error('Error adding user:', error);
     return next({ status: 500, message: 'Internal Server Error' });
@@ -124,17 +154,19 @@ const addUser = async (req, res, next) => {
 
 // Edit user by id
 const updateUser = async (req, res, next) => {
-  console.log('editUser request body', req.body, req.userId);
+  //console.log('editUser request body', req, req.userId);
 
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    //console.log("updateUser", errors);
     const error = new Error('Invalid or missing fields');
     error.status = 400;
     return next(error);
   }
 
   try {
+    console.log("updateUse try");
     const user = await editUser(req);
     if (user) {
       return res.json({message: 'User updated.'});
@@ -160,8 +192,8 @@ const eraseUser = async (req, res, next) => {
 
     if (admin && req.userId == req.params.id) {
       return next({ status: 500, message: 'Admin account cannot be deleted' });
-    } else if (admin || req.userId === req.params.id) {
-      const result = await deleteUser(req.params.id);
+    } else if (admin || req.userId) {
+      const result = await deleteUser(req.userId);
       console.log("deleteUser testing, result", result);
     } else {
       const error = new Error('Access denied');
@@ -175,4 +207,4 @@ const eraseUser = async (req, res, next) => {
 
 };
 
-export {getUsers, getUserById, addUser, updateUser, eraseUser};
+export {getUsers, getUserById, addUser, updateUser, eraseUser, changePassword};

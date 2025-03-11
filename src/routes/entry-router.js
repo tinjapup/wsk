@@ -17,14 +17,6 @@ entryRouter
   .get(authenticateToken, getEntryById)
 
   .post(
-    body('entry_date').notEmpty().isDate(),
-    body('activity').notEmpty().trim(),
-    body('duration', 'Duration must be numbers')
-      .notEmpty()
-      .trim()
-      .isNumeric()
-      .isLength({max: 20}),
-    body('title').notEmpty().trim().isLength({max: 140}),
     body('notes').trim().isLength({max: 140}),
     authenticateToken,
     validationErrorHandler,
@@ -38,9 +30,5 @@ entryRouter
   authenticateToken,
   validationErrorHandler,updateEntry
 );
-
-entryRouter
-  .route('/:id')
-  .get(authenticateToken, getEntryById)
 
 export default entryRouter;

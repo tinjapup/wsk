@@ -5,7 +5,6 @@ const selectAllUsers = async () => {
   const [rows] = await promisePool.query(
     'SELECT user_id, username, email, created_at, user_level FROM Users',
   );
-  console.log('selectAllUsers result', rows);
   return rows;
 };
 
@@ -13,10 +12,9 @@ const selectAllUsers = async () => {
 const selectUserById = async (userId) => {
   try {
     const [rows] = await promisePool.query(
-      'SELECT user_id, username, email, created_at, user_level FROM Users WHERE user_id=?',
+      'SELECT user_id, username, email, first_name, last_name, weight, height, created_at, user_level FROM Users WHERE user_id=?',
       [userId],
     );
-    console.log(rows);
     return rows[0];
   } catch (error) {
     console.error(error);
@@ -28,11 +26,9 @@ const selectUserById = async (userId) => {
 const insertUser = async (user) => {
   try {
     const [result] = await promisePool.query(
-      'INSERT INTO Users (username, password, email, user_level) VALUES (?, ?, ?, ?)',
-      [user.username, user.password, user.email, "user"],
+      'INSERT INTO Users (username, password, email, user_level, first_name, last_name, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [user.username, user.password, user.email, 'user', user.firstname, user.lastname, user.height, user.weight],
     );
-    console.log('insertUser', result);
-    // return only first item of the result array
     return result.insertId;
   } catch (error) {
     console.error(error);
@@ -42,50 +38,46 @@ const insertUser = async (user) => {
 
 // update user
 const editUser = async (req) => {
-  const id = req.userId;
-  const updates = req.body;
-
-  console.log('editUser', id, updates);
+  const id = req.body.user_id;
+  console.log("id", id);
 
   try {
-    const [existingRows] = await promisePool.query('SELECT * FROM Users WHERE user_id = ?', id);
+    const [existingUser] = await promisePool.query(
+      'SELECT * FROM Users WHERE user_id = ?',
+      [id],
+    );
 
-    console.log('existingRows', existingRows);
-
-    if (existingRows.length === 0) {
-      return { message: `User with ID ${id} could not be found.` };
+    if (existingUser.length === 0) {
+      return {message: `User with ID ${id} could not be found.`};
     }
 
-    const existingEntry = existingRows[0];
+    const existingInfo = existingUser[0];
 
-    console.log('existingEntry', existingEntry);
-    console.log('updates', updates);
-
+    // combine new and old data
     const updatedEntry = {
-      ...existingEntry,
-      ...updates,
+      ...existingInfo,
+      ...req.body,
     };
 
-    console.log('updatedEntry', updatedEntry);
+    console.log("updatedEntry", updatedEntry);
 
-    const { email } = updatedEntry;
+    const {email, first_name, last_name, height, weight, password} =
+      updatedEntry;
 
     const [result] = await promisePool.query(
-      'UPDATE Users SET email = ? WHERE user_id = ?',
-      [email, id]
+      'UPDATE Users SET email = ?, first_name = ?, last_name = ?, height = ?, weight = ?, password = ? WHERE user_id = ?',
+      [email, first_name, last_name, height, weight, password, id]
     );
 
     if (result.affectedRows === 0) {
-      return { message: `User with ID ${id} was not updated.` };
+      return {message: `User with ID ${id} was not updated.`};
     }
-
-    return { message: `User with ID ${id} updated.` };
+    return {message: `User with ID ${id} updated.`};
   } catch (e) {
-    console.error('Error:', e.message);
-    return { error: e.message };
+    console.error('Error editUser:', e.message);
+    return {error: e.message};
   }
 };
-
 
 // gets user by username and password
 const selectUserByNameAndPassword = async (username, password) => {
@@ -94,7 +86,6 @@ const selectUserByNameAndPassword = async (username, password) => {
       'SELECT user_id, username, email, created_at, user_level FROM Users WHERE username=? AND password=?',
       [username, password],
     );
-    console.log(rows);
     return rows[0];
   } catch (error) {
     console.error(error);
@@ -106,11 +97,9 @@ const selectUserByNameAndPassword = async (username, password) => {
 const selectUserByUsername = async (username) => {
   try {
     const [rows] = await promisePool.query(
-      'SELECT user_id, username, password, email, created_at, user_level FROM Users WHERE username=?',
+      'SELECT * FROM Users WHERE username=?',
       [username],
     );
-    console.log(rows);
-    // return only first item of the result array
     return rows[0];
   } catch (error) {
     console.error(error);
@@ -120,24 +109,24 @@ const selectUserByUsername = async (username) => {
 
 // delete user
 const deleteUser = async (user) => {
-  console.log("deleteUser testing, id:", user);
-
+  console.log("deleteUser", user);
   try {
-    await promisePool.query("DELETE FROM DiaryEntries WHERE user_id = ?", [user]);
-    await promisePool.query("DELETE FROM Medications WHERE user_id = ?", [user]);
-    await promisePool.query("DELETE FROM Exercises WHERE user_id = ?", [user]);
-    const [rows] = await promisePool.query('DELETE FROM Users WHERE user_id = ?', [user]);
-    console.log('rows', rows);
+    await promisePool.query('DELETE FROM Entries WHERE user_id = ?', [
+      user,
+    ]);
+    const [rows] = await promisePool.query(
+      'DELETE FROM Users WHERE user_id = ?',
+      [user],
+    );
     if (!rows.affectedRows) {
-      return { message: `User with ID ${user} could not been deleted.` };
+      return {message: `User with ID ${user} could not been deleted.`};
     }
     return {message: `User with ID ${user} deleted.`};
   } catch (e) {
     console.error('error', e.message);
     return {error: e.message};
-  };
-}
-
+  }
+};
 
 export {
   editUser,
@@ -146,5 +135,5 @@ export {
   insertUser,
   selectUserByNameAndPassword,
   selectUserByUsername,
-  deleteUser
+  deleteUser,
 };

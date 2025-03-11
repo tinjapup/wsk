@@ -7,13 +7,9 @@ const findActivities = async (user, id) => {
     let query, values;
 
     if (id == 0) {
-      // Fetch all entries for the user
       query = "SELECT * FROM Activities ORDER BY name ASC";
     } else {
-      // Fetch a specific entry by id and user
-
-      id = 1;
-
+      // id = 1;
       query = "SELECT * FROM Activities WHERE activity_id = ?";
       values = [id];
     }
